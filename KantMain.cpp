@@ -18,6 +18,7 @@ bool cmd_window = true;
 bool cmd_cut = false;
 bool cmd_fps = true;
 int cmd_per_second = 5;
+
 unsigned int _stdcall thread_cmd(void* data)
 {
 	printf("threadUser %d \n", GetCurrentThreadId());
@@ -83,6 +84,15 @@ unsigned int _stdcall thread_cmd(void* data)
 	return 0;
 }
 
+int img_count = 100;
+
+void saveImage(Mat &src) {
+	stringstream ss;
+	ss << img_count++;
+	string file_name = "img_" + ss.str() + ".jpg";
+	cout << "file_name = " << file_name << endl;
+	imwrite(file_name, src);
+}
 
 int main()
 {
@@ -95,9 +105,9 @@ int main()
 		getchar();
 		return -1;
 	}
-	cap.set(CV_CAP_PROP_FOURCC, CV_FOURCC('M', 'J', 'P', 'G'));//ÉèÖÃÎªMJPG¸ñÊ½
-	cap.set(CV_CAP_PROP_FRAME_HEIGHT, 640);
-	cap.set(CV_CAP_PROP_FRAME_WIDTH, 480);
+	cap.set(CV_CAP_PROP_FOURCC, CV_FOURCC('M', 'J', 'P', 'G'));//è®¾ç½®ä¸ºMJPGæ ¼å¼
+	cap.set(CV_CAP_PROP_FRAME_WIDTH, 1920/2);
+	cap.set(CV_CAP_PROP_FRAME_HEIGHT, 1084 / 2);
 	TickMeter tm;
 	HANDLE handle_cmd, handle_timer;
 	handle_cmd = (HANDLE)_beginthreadex(0, 0, &thread_cmd, 0, 0, 0);
@@ -115,25 +125,32 @@ int main()
 			if (cmd_window) {
 				imshow("frame", frame);
 			}
+			else {
+				destroyAllWindows();
+			}
 			if (waitKey(1) == 27) {}
 			// cut picuure
 			if (cmd_manual == false) {
 				int cost = (clock() - t_start) / CLOCKS_PER_SEC;
 				if (cost > cmd_per_second) {
-					cout << "   $$½ØÍ¼²Ù×÷$$$$...." << cost << endl;
+					cout << "   $$æˆªå›¾æ“ä½œ$$$$...." << cost << endl;
+					saveImage(frame);
 					t_start = clock();
 				}
 			}
 			else {
 				if (cmd_cut) {
-					cout << "   $$Manual-->½ØÍ¼²Ù×÷$$$$...." << endl;
+					cout << "   $$Manual-->æˆªå›¾æ“ä½œ$$$$...." << endl;
+					saveImage(frame);
 					cmd_cut = false;
 				}
 			}
 		}
 		//
 		tm.stop();
-		cout << "                              " << 100 / tm.getTimeSec() << "fps" << endl;//Êä³öÖ¡ÂÊ
+		if (cmd_fps) {
+			cout << "                              " << 100 / tm.getTimeSec() << "fps" << endl;//è¾“å‡ºå¸§ç‡
+		}
 		
 	}
 	
