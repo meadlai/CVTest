@@ -1,0 +1,9 @@
+-create
+opencv_annotation --annotations="C:\Users\kant\Documents\project\opencv\training_d\main.info" --images="C:\Users\kant\Documents\project\opencv\training_d\pos"
+-create
+opencv_createsamples -info "C:\Users\kant\Documents\project\opencv\training_d\main.info" -num 80 -w 40 -h 80 -vec "C:\Users\kant\Documents\project\opencv\training_d\main.vec"  
+-view
+opencv_createsamples -vec "C:\Users\kant\Documents\project\opencv\training_d\main.vec" -w 40 -h 80
+
+-training
+opencv_traincascade -data "C:\Users\kant\Documents\project\opencv\training_d\data" -vec "C:\Users\kant\Documents\project\opencv\training_d\main.vec" -bg "C:\Users\kant\Documents\project\opencv\training_d\bg.txt" -numPos 80 -numNeg 163 -numStages 10 -w 40 -h 80
